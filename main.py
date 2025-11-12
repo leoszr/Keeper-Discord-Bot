@@ -21,23 +21,36 @@ bot = commands.Bot(command_prefix='*',intents=intents)
 @bot.event
 async def on_ready():
     print("Pronto para invocar horrores cósmicos")
-
+    print(bot.user.name)
 
 
 @bot.command()
-async def teste(ctx):
-    await ctx.send(f"é negada...{ctx.author.mention}")
+async def roll(ctx, dice: str):
+    """formato esperado: NdN"""
+    try:
+        rolls, limit = map(int,dice.split('d'))
+    except Exception:
+        await ctx.send("o formato deve ser 'NdN'")
+        return
+
+    result = ', '.join(str(random.randint(1,limit)) for r in range(rolls))
+    await ctx.send(result)
+
 
 @bot.command()
-async def roll(ctx, dice, sides):
-    result =0
-    for i in range(int(dice)+1):
-        print(i,result)
-        result += random.randint(1,int(sides))
-    await ctx.channel.send(f"{dice}d{sides} resultado da rolagem:{result}")
+async def maior(ctx, dice: str):
+    """formato esperado: NdN"""
+    try:
+        rolls, limit = map(int,dice.split('d'))
+    except Exception:
+        await ctx.send("o formato deve ser 'NdN'")
+        return
 
+    resultados = [random.randint(1, limit) for _ in range(rolls)]
+    maior = max(resultados)
 
-
+    # Mostra todas as rolagens e o maior valor
+    await ctx.send(f"Rolagens: {', '.join(map(str, resultados))} Maior valor: {maior}")
 
 
 bot.run(token, log_handler=handler,log_level=logging.DEBUG)
